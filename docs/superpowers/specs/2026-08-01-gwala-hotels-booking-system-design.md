@@ -200,21 +200,25 @@ cancelledAt      timestamp  optional
 cancelReason     string     optional
 ```
 
-**Status lifecycle.**
+**Status lifecycle.** Every website booking starts at `pending`. The permitted
+transitions are exactly:
 
-```
-pending ──confirm──> confirmed ──check in──> checked_in ──check out──> checked_out
-   │                     │                        │
-   └──cancel──> cancelled <──cancel──┘            │
-                     ▲                            │
-   confirmed ──guest never arrived──> no_show ────┘
-```
+| From | To | Triggered by | Inventory effect |
+|---|---|---|---|
+| `pending` | `confirmed` | Admin accepts | none |
+| `pending` | `cancelled` | Admin rejects, or guest cancels | releases rooms |
+| `confirmed` | `checked_in` | Admin, on arrival | none |
+| `confirmed` | `cancelled` | Admin, or guest cancels | releases rooms |
+| `confirmed` | `no_show` | Admin, guest never arrived | releases rooms |
+| `checked_in` | `checked_out` | Admin, on departure | none |
 
-`pending` is the state every website booking starts in. `confirmed` means the
-hotel has accepted it. `cancelled` and `no_show` both release the rooms back to
-inventory; every other transition leaves inventory untouched. Rooms are reserved
-at creation, not at confirmation — otherwise the site could offer a room it has
-already promised.
+`checked_out`, `cancelled` and `no_show` are terminal. Any transition not in this
+table is rejected by the server with a message naming the current status.
+
+Rooms are reserved when the booking is created, not when it is confirmed —
+otherwise the site could keep offering a room it has already promised to someone.
+Only the three releasing transitions above give rooms back, and each does so in a
+transaction that decrements every night of the stay.
 
 ### `reviews/{reviewId}`
 
