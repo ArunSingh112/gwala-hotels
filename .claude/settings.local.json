@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(git --version)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m 'Add design spec for Gwala Hotels booking system *)",
+      "Bash(git -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m 'Clarify booking status transitions in spec *)",
+      "Bash(git -c user.name=Claude -c user.email=noreply@anthropic.com commit -q -m 'Add resolved branch addresses, contact number and placeholder content *)",
+      "Bash(java -version)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(git commit -m 'Scaffold Next.js 15 app with Tailwind, Firebase init and env plumbing *)"
+    ]
+  }
+}

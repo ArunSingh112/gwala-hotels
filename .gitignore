@@ -5,3 +5,10 @@ node_modules/
 *.log
 .DS_Store
 serviceAccountKey.json
+firebase-debug.log
+firestore-debug.log
+.firebase/
+*.tsbuildinfo
+next-env.d.ts
+.vercel
+/out/

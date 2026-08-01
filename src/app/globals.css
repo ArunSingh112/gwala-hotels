@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+  body {
+    @apply bg-cream-50 text-maroon-950 antialiased;
+  }
+  /* Visible focus rings everywhere — WCAG AA (design spec, Accessibility). */
+  :focus-visible {
+    @apply outline-none ring-2 ring-marigold-500 ring-offset-2 ring-offset-cream-50;
+  }
+}
