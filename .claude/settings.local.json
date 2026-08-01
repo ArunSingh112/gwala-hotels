@@ -13,7 +13,10 @@
       "Bash(npm --version)",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Bash(git commit -m 'Scaffold Next.js 15 app with Tailwind, Firebase init and env plumbing *)"
+      "Bash(git commit -m 'Scaffold Next.js 15 app with Tailwind, Firebase init and env plumbing *)",
+      "Bash(git config *)",
+      "Bash(npx tsc *)",
+      "Bash(git commit -q -m 'Add data model types, Firestore security rules and seed script *)"
     ]
   }
 }

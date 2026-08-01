@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Deliberately short: clients may read public content only. Every write in
+// the system goes through Next.js route handlers using the Admin SDK, which
+// bypasses these rules. Anything not matched below is denied.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /hotels/{hotelId} {
+      allow read: if true;
+
+      match /roomTypes/{roomTypeId} {
+        allow read: if true;
+      }
+    }
+
+    match /reviews/{reviewId} {
+      // Only approved reviews are publicly readable.
+      allow read: if resource.data.status == 'approved';
+    }
+
+    // bookings, availability, users: no client access at all.
+    match /{document=**} {
+      allow write: if false;
+    }
+  }
+}
