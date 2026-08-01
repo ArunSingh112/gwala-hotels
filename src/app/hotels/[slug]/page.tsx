@@ -12,6 +12,7 @@ import {
 import { getAttraction } from "@/lib/attractions";
 import { SiteHeader } from "@/components/site/header";
 import { SiteFooter } from "@/components/site/footer";
+import { ReviewForm } from "@/components/site/review-form";
 
 export const revalidate = 300;
 
@@ -220,14 +221,14 @@ export default async function HotelPage({ params }: Props) {
               </section>
 
               {/* Reviews */}
-              {reviews.length > 0 && (
-                <section aria-labelledby="reviews-heading">
-                  <h2
-                    id="reviews-heading"
-                    className="font-display text-2xl font-semibold text-maroon-900"
-                  >
-                    Guest reviews
-                  </h2>
+              <section aria-labelledby="reviews-heading">
+                <h2
+                  id="reviews-heading"
+                  className="font-display text-2xl font-semibold text-maroon-900"
+                >
+                  Guest reviews
+                </h2>
+                {reviews.length > 0 ? (
                   <div className="mt-4 grid gap-4 sm:grid-cols-2">
                     {reviews.map((r) => (
                       <blockquote key={r.id} className="card p-5">
@@ -257,8 +258,15 @@ export default async function HotelPage({ params }: Props) {
                       </blockquote>
                     ))}
                   </div>
-                </section>
-              )}
+                ) : (
+                  <p className="mt-3 text-sm text-maroon-700">
+                    No reviews yet — stayed with us? Be the first to write one.
+                  </p>
+                )}
+                <div className="mt-4">
+                  <ReviewForm hotelId={hotel.slug} />
+                </div>
+              </section>
             </div>
 
             {/* Sidebar */}

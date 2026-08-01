@@ -24,7 +24,8 @@
       "Bash(git commit -q -m 'Add public site: home, hotels list, branch pages, attractions, about, contact *)",
       "Bash(git commit -q -m 'Add booking flow: search-choose-details wizard, confirmation with WhatsApp, lookup and cancel *)",
       "Bash(git commit -q -m 'Add admin auth, role guard and bookings management screen *)",
-      "Bash(git commit -q -m 'Add admin dashboard, occupancy calendar, rooms & pricing, branch settings *)"
+      "Bash(git commit -q -m 'Add admin dashboard, occupancy calendar, rooms & pricing, branch settings *)",
+      "Bash(git commit -q -m 'Add reviews \\(submission, moderation, display\\) and user management *)"
     ]
   }
 }
