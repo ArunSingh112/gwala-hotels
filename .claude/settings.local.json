@@ -25,7 +25,14 @@
       "Bash(git commit -q -m 'Add booking flow: search-choose-details wizard, confirmation with WhatsApp, lookup and cancel *)",
       "Bash(git commit -q -m 'Add admin auth, role guard and bookings management screen *)",
       "Bash(git commit -q -m 'Add admin dashboard, occupancy calendar, rooms & pricing, branch settings *)",
-      "Bash(git commit -q -m 'Add reviews \\(submission, moderation, display\\) and user management *)"
+      "Bash(git commit -q -m 'Add reviews \\(submission, moderation, display\\) and user management *)",
+      "Bash(npm start *)",
+      "Bash(curl -s -o /dev/null -w \"/ -> %{http_code}\\\\n\" http://localhost:3000/)",
+      "Bash(curl -s -o /dev/null -w \"/hotels/gwala-bhawan -> %{http_code}\\\\n\" http://localhost:3000/hotels/gwala-bhawan)",
+      "Bash(curl -s -o /dev/null -w \"/booking -> %{http_code}\\\\n\" http://localhost:3000/booking)",
+      "Bash(curl -s -o /dev/null -w \"/attractions -> %{http_code}\\\\n\" http://localhost:3000/attractions)",
+      "Bash(kill %1)",
+      "Bash(git commit -q -m 'Add sitemap, robots, README and final polish *)"
     ]
   }
 }

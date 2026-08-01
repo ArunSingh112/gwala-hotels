@@ -1,5 +1,6 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAdminAuth } from "@/components/admin/auth-context";
 import { formatPhoneForDisplay } from "@/lib/phone";
@@ -73,15 +74,16 @@ const ACTIONS: Record<BookingStatus, { to: BookingStatus; label: string; danger?
 export function BookingsScreen() {
   const { authedFetch, profile } = useAdminAuth();
   const isOwner = profile?.role === "owner";
+  const searchParams = useSearchParams();
 
   const [branches, setBranches] = useState<BranchOption[]>([]);
   const [rows, setRows] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Filters
+  // Filters — status can arrive from the dashboard's "pending" card link.
   const [hotelId, setHotelId] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(searchParams.get("status") ?? "");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const [q, setQ] = useState("");
