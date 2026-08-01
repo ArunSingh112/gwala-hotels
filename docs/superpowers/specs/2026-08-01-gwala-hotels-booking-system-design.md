@@ -49,23 +49,75 @@ half-built hooks for them should be committed.
 
 ## The five branches
 
-| # | Name | Slug | Location |
+Addresses below were resolved from the owner's Google Maps links.
+
+| # | Name | Slug | Address |
 |---|---|---|---|
 | 1 | Hotel Gwala Inn | `gwala-inn` | HM8H+MCM, Unnamed Road, Chaitanya Vihar, Vrindavan, Uttar Pradesh 281121 |
-| 2 | Gwala Dham | `gwala-dham` | https://maps.app.goo.gl/QmAPnr5fGTqBxRX39 |
-| 3 | Gwala Palace | `gwala-palace` | https://maps.app.goo.gl/KCcG23JpY8rx8JA4A |
-| 4 | Gwala Residency | `gwala-residency` | https://maps.app.goo.gl/KCcG23JpY8rx8JA4A |
-| 5 | Gwala Bhawan | `gwala-bhawan` | https://maps.app.goo.gl/dYkBH5P9vv69ffBc7 |
+| 2 | Gwala Dham | `gwala-dham` | Sarswati Vihar, near Maltilavel car parking, Chaitanya Vihar, Vrindavan, Mathura, Uttar Pradesh 281121 |
+| 3 | Gwala Palace | `gwala-palace` | Near Vidhyapith Chauraha, Gandhi Nagar, Kishor Pura, Vrindavan, Uttar Pradesh 281121 |
+| 4 | Gwala Residency | `gwala-residency` | Near Vidhyapith Chauraha, Gandhi Nagar, Kishor Pura, Vrindavan, Uttar Pradesh 281121 |
+| 5 | Gwala Bhawan | `gwala-bhawan` | Banke Bihari Mandir St, Bankebihari Colony, Vrindavan, Mathura, Uttar Pradesh 281121 |
 
-**Known data issue:** rows 3 and 4 carry the same Google Maps link. One of them is
-wrong. The seed data will use the link above for Gwala Palace and leave Gwala
-Residency's map field empty rather than publish a wrong address; the correct link
-must be supplied before launch. The branch page renders without a map when the
-field is empty, so this does not block development.
+Gwala Palace and Gwala Residency share an address deliberately — they sit at the
+same location. Both branch pages therefore show the same map, and the copy on each
+should say so plainly rather than leave a guest wondering whether it is an error.
 
-Street addresses, phone numbers, room types, room counts and nightly prices for
-all five branches are entered by the owner through the admin panel after the
-first deploy. Seed data ships with the names, slugs and the information above.
+**Maps without an API key.** Google's Maps Embed API needs a billed key, and the
+short links resolve to place identifiers rather than coordinates. Each branch page
+therefore embeds `https://www.google.com/maps?ftid=<placeId>&output=embed`, which
+is free and pins the exact listing. The identifiers:
+
+| Branch | `ftid` |
+|---|---|
+| Gwala Inn | `0x39736e2188289e23:0xcf40b8cf22942997` |
+| Gwala Dham | `0x39736f28d5772d9d:0xcaa3124d6402dc5d` |
+| Gwala Palace and Gwala Residency | `0x39736f00672c8bad:0x9af7ba8c8ab7763d` |
+| Gwala Bhawan | `0x39736f9bc9922ee9:0xfc451e18491762d4` |
+
+A "Get directions" button beside each map opens the original `maps.app.goo.gl`
+link, which behaves better on phones than an embedded map does.
+
+**Two notes for the owner, not blocking.** Gwala Inn is listed on Google as
+"Gwala Guest House" and Gwala Palace as "Gwala palaca"; correcting those listings
+would help guests find the right place. Separately, Gwala Bhawan stands on Banke
+Bihari Mandir Street — worth leading with on that branch's page and in its page
+title, since proximity to the temple is what most pilgrims search for.
+
+**Contact.** All five branches share one WhatsApp and phone number,
+**+91 70601 89819** (`917060189819` in click-to-chat links). The number is stored
+per branch rather than globally, so any branch can be given its own later without
+a code change.
+
+## Placeholder content
+
+Real room types, prices and photographs will come later. Development uses the
+placeholders below so every screen can be built and tested against realistic data.
+
+**Room types.** The same four are seeded for all five branches, at rates typical
+of mid-range Vrindavan guest houses:
+
+| Room type | Rate / night | Sleeps | Rooms per branch |
+|---|---|---|---|
+| Standard Double | ₹1,200 | 2 adults + 1 child | 8 |
+| Deluxe Double (AC) | ₹1,800 | 2 adults + 1 child | 6 |
+| Family Room | ₹2,800 | 4 adults + 2 children | 4 |
+| Suite | ₹3,500 | 3 adults + 2 children | 2 |
+
+These are guesses, not the business's real rates. The owner edits all of it in the
+admin panel after deployment — no code change and no redeploy is needed, because
+room types and prices are Firestore data, not configuration.
+
+**Photographs.** Until real photos arrive, each branch uses a locally generated
+placeholder image carrying the branch name, stored at
+`/public/hotels/<slug>/`. They are deliberately plain, so nobody mistakes a
+placeholder for finished work. Replacing them means dropping real files into that
+folder under the same names.
+
+**A seeded-data banner** appears in the admin dashboard while any branch still
+holds placeholder rates, reading "Rooms and prices are still sample data" with a
+link to the rooms screen. It disappears once the owner saves real values, so the
+site cannot quietly go live quoting ₹1,200 for a room that costs ₹2,500.
 
 ## Architecture
 
@@ -119,8 +171,9 @@ slug          string   "gwala-inn"
 tagline       string
 description   string
 address       string
-mapsUrl       string   Google Maps link, may be empty
-mapEmbedUrl   string   iframe src, may be empty
+mapsUrl       string   the maps.app.goo.gl short link, for "Get directions"
+mapFtid       string   Google place id, used for the keyless embed
+distances     map      attraction slug -> human text, e.g. "5 min walk"
 phone         string   E.164, used for WhatsApp click-to-chat: "919XXXXXXXXX"
 displayPhone  string   "+91 9XXX XXX XXX"
 email         string
@@ -341,8 +394,16 @@ cannot deactivate their own account.
 | `/booking` | Search → choose room → details → submit |
 | `/booking/confirmation/[code]` | Booking code, WhatsApp button, what to bring |
 | `/booking/lookup` | Find by code + phone; cancel |
-| `/attractions` | Banke Bihari, Prem Mandir, ISKCON, Nidhivan, Radha Raman and others, each with distance from every branch |
+| `/attractions` | Banke Bihari, Prem Mandir, ISKCON, Nidhivan, Radha Raman and others, with photos and a line on what each is |
 | `/about`, `/contact` | Group information; contact details for all branches |
+
+**Distances to attractions.** No branch coordinates are available without a paid
+Maps key, so distances are not computed. Instead each branch document holds an
+optional `distances` map keyed by attraction (`{ "banke-bihari": "5 min walk" }`),
+edited by the owner in branch settings and shown on that branch's page. Nothing is
+displayed for an attraction with no entry — better an absent claim than an invented
+one, since a guest who was promised a five-minute walk and got a thirty-minute one
+leaves a bad review.
 
 **SEO.** Per-page titles and descriptions, Open Graph tags, JSON-LD `Hotel`
 structured data on each branch page including address, price range and aggregate
@@ -425,9 +486,13 @@ than through a browser.
 
 ## Open items for the owner
 
-1. The correct Google Maps link for Gwala Residency.
-2. Street address, phone number and WhatsApp number for each of the five branches.
-3. Room types, counts and nightly prices per branch — enterable in the panel after
-   the first deploy.
-4. Photographs, to be placed in `/public/hotels/<slug>/`.
-5. Firebase project credentials.
+Only the first of these blocks development.
+
+1. **Firebase project credentials** — nothing can be stored without them.
+2. **Real room types, counts and nightly rates** per branch, replacing the
+   placeholders. Entered in the admin panel; no redeploy needed.
+3. **Photographs** for each branch, dropped into `/public/hotels/<slug>/`.
+4. **Walking or driving times** from each branch to the main temples, if those
+   distances are to be shown.
+5. **Optional:** correcting the Google listings — Gwala Inn appears as "Gwala
+   Guest House" and Gwala Palace as "Gwala palaca".
