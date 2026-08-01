@@ -21,7 +21,8 @@
       "Bash(git commit -q -m 'Add availability engine: date math, phone, booking codes, status machine, roles *)",
       "Bash(git commit -q -m 'Add public booking APIs: availability search, transactional create, lookup, cancel *)",
       "Bash(npx tsx *)",
-      "Bash(git commit -q -m 'Add public site: home, hotels list, branch pages, attractions, about, contact *)"
+      "Bash(git commit -q -m 'Add public site: home, hotels list, branch pages, attractions, about, contact *)",
+      "Bash(git commit -q -m 'Add booking flow: search-choose-details wizard, confirmation with WhatsApp, lookup and cancel *)"
     ]
   }
 }
