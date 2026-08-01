@@ -16,7 +16,9 @@
       "Bash(git commit -m 'Scaffold Next.js 15 app with Tailwind, Firebase init and env plumbing *)",
       "Bash(git config *)",
       "Bash(npx tsc *)",
-      "Bash(git commit -q -m 'Add data model types, Firestore security rules and seed script *)"
+      "Bash(git commit -q -m 'Add data model types, Firestore security rules and seed script *)",
+      "Bash(npx vitest *)",
+      "Bash(git commit -q -m 'Add availability engine: date math, phone, booking codes, status machine, roles *)"
     ]
   }
 }
