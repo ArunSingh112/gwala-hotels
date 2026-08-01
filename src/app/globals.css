@@ -13,4 +13,56 @@
   :focus-visible {
     @apply outline-none ring-2 ring-marigold-500 ring-offset-2 ring-offset-cream-50;
   }
+  ::selection {
+    @apply bg-marigold-200 text-maroon-950;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-marigold-500 px-6 py-3 font-semibold text-maroon-950 shadow-sm transition hover:bg-marigold-400 active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border-2 border-maroon-900 px-6 py-3 font-semibold text-maroon-900 transition hover:bg-maroon-900 hover:text-cream-50 active:translate-y-px;
+  }
+  .btn-whatsapp {
+    @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-[#25D366] px-6 py-3 font-semibold text-white shadow-sm transition hover:bg-[#1fb355] active:translate-y-px;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-semibold text-maroon-900;
+  }
+  .field-input {
+    @apply block w-full rounded-lg border border-maroon-200 bg-white px-4 py-3 text-maroon-950 placeholder:text-maroon-300;
+  }
+  .card {
+    @apply overflow-hidden rounded-xl border border-cream-200 bg-white shadow-sm;
+  }
+}
+
+@layer utilities {
+  /* Marigold-garland motif: a thin repeating band used as a section divider,
+     drawn in CSS so it costs no bytes of imagery on patchy 4G. */
+  .garland {
+    background-image: radial-gradient(
+        circle at 6px 6px,
+        theme("colors.marigold.400") 3px,
+        transparent 3.5px
+      ),
+      radial-gradient(
+        circle at 18px 6px,
+        theme("colors.marigold.600") 3px,
+        transparent 3.5px
+      );
+    background-size: 24px 12px;
+    height: 12px;
+  }
+  /* Subtle jali-screen texture for hero and section backgrounds. */
+  .jali {
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgb(122 42 13 / 0.07) 1px,
+      transparent 1.5px
+    );
+    background-size: 22px 22px;
+  }
 }
