@@ -65,4 +65,41 @@
     );
     background-size: 22px 22px;
   }
+
+  /* Staggered page-load reveal. Respect reduced-motion. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: reveal 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
+  .reveal-1 { animation-delay: 0.05s; }
+  .reveal-2 { animation-delay: 0.15s; }
+  .reveal-3 { animation-delay: 0.25s; }
+  .reveal-4 { animation-delay: 0.35s; }
+  .reveal-5 { animation-delay: 0.45s; }
+  @keyframes reveal {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Slow drift for the hero photo stack. */
+  @keyframes drift {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-6px) rotate(var(--tilt, 0deg)); }
+  }
+  .drift {
+    animation: drift 7s ease-in-out infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .drift { animation: none; }
+  }
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getApprovedReviews, getHotels } from "@/lib/data/public";
 import { ATTRACTIONS } from "@/lib/attractions";
@@ -14,6 +15,12 @@ export default async function HomePage() {
     getApprovedReviews(undefined, 6),
   ]);
   const branches = hotels.map((h) => ({ slug: h.slug, name: h.name }));
+  // Three photos for the hero collage, spread across branches.
+  const heroPhotos = [
+    { src: "/hotels/gwala-bhawan/hero.jpg", alt: "Room at Gwala Bhawan" },
+    { src: "/hotels/gwala-inn/hero.jpg", alt: "Room at Hotel Gwala Inn" },
+    { src: "/hotels/gwala-residency/hero.jpg", alt: "Room at Gwala Residency" },
+  ];
 
   return (
     <>
@@ -21,31 +28,80 @@ export default async function HomePage() {
       <main>
         {/* Hero */}
         <section className="jali relative overflow-hidden bg-cream-100">
-          <div className="mx-auto max-w-6xl px-4 pb-10 pt-14 sm:pb-16 sm:pt-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-marigold-700">
-              Radhe Radhe · Welcome to Braj
-            </p>
-            <h1 className="mt-3 max-w-2xl font-display text-4xl font-semibold leading-tight text-maroon-950 sm:text-5xl">
-              Rest well in Vrindavan,
-              <br />
-              <span className="text-marigold-600">steps from the temples.</span>
-            </h1>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-maroon-800">
-              Five family-run Gwala Hotels branches across the holy town. Book
-              in under two minutes — no account, no advance payment. Pay when
-              you arrive.
-            </p>
+          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 pb-10 pt-14 sm:pb-16 sm:pt-20 lg:grid-cols-[1fr_minmax(0,420px)]">
+            <div>
+              <p className="reveal reveal-1 text-sm font-bold uppercase tracking-[0.2em] text-marigold-700">
+                Radhe Radhe · Welcome to Braj
+              </p>
+              <h1 className="reveal reveal-2 mt-3 max-w-2xl font-display text-4xl font-semibold leading-tight text-maroon-950 sm:text-5xl">
+                Rest well in Vrindavan,
+                <br />
+                <span className="text-marigold-600">steps from the temples.</span>
+              </h1>
+              <p className="reveal reveal-3 mt-4 max-w-xl text-lg leading-relaxed text-maroon-800">
+                Five family-run Gwala Hotels branches across the holy town. Book
+                in under two minutes — no account, no advance payment. Pay when
+                you arrive.
+              </p>
 
-            <div className="mt-8">
-              <SearchWidget branches={branches} />
+              <div className="reveal reveal-4 mt-8">
+                <SearchWidget branches={branches} />
+              </div>
+
+              <ul className="reveal reveal-5 mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-maroon-800">
+                <li>✓ Pay at hotel</li>
+                <li>✓ Free cancellation</li>
+                <li>✓ WhatsApp confirmation</li>
+                <li>✓ 5 branches, one family</li>
+              </ul>
             </div>
 
-            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-maroon-800">
-              <li>✓ Pay at hotel</li>
-              <li>✓ Free cancellation</li>
-              <li>✓ WhatsApp confirmation</li>
-              <li>✓ 5 branches, one family</li>
-            </ul>
+            {/* Photo stack: three real rooms, hand-tilted like postcards. */}
+            <div
+              aria-hidden
+              className="relative mx-auto hidden h-[420px] w-full max-w-[400px] lg:block"
+            >
+              <div
+                className="drift absolute left-0 top-6 h-56 w-64 overflow-hidden rounded-2xl border-4 border-white shadow-xl"
+                style={{ "--tilt": "-4deg", animationDelay: "0.2s" } as React.CSSProperties}
+              >
+                <Image
+                  src={heroPhotos[1].src}
+                  alt={heroPhotos[1].alt}
+                  fill
+                  sizes="256px"
+                  className="object-cover"
+                />
+              </div>
+              <div
+                className="drift absolute right-0 top-0 h-64 w-56 overflow-hidden rounded-2xl border-4 border-white shadow-2xl"
+                style={{ "--tilt": "3deg" } as React.CSSProperties}
+              >
+                <Image
+                  src={heroPhotos[0].src}
+                  alt={heroPhotos[0].alt}
+                  fill
+                  sizes="224px"
+                  priority
+                  className="object-cover"
+                />
+              </div>
+              <div
+                className="drift absolute bottom-0 left-1/2 h-52 w-60 -translate-x-1/2 overflow-hidden rounded-2xl border-4 border-white shadow-xl"
+                style={{ "--tilt": "-1.5deg", animationDelay: "0.5s" } as React.CSSProperties}
+              >
+                <Image
+                  src={heroPhotos[2].src}
+                  alt={heroPhotos[2].alt}
+                  fill
+                  sizes="240px"
+                  className="object-cover"
+                />
+              </div>
+              <span className="absolute -right-2 bottom-14 rounded-full bg-maroon-900 px-4 py-2 font-display text-sm font-semibold text-marigold-300 shadow-lg">
+                Real rooms, real photos
+              </span>
+            </div>
           </div>
           <div aria-hidden className="garland" />
         </section>
