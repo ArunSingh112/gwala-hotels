@@ -13,6 +13,8 @@ import { getAttraction } from "@/lib/attractions";
 import { SiteHeader } from "@/components/site/header";
 import { SiteFooter } from "@/components/site/footer";
 import { ReviewForm } from "@/components/site/review-form";
+import { Gallery } from "@/components/site/gallery";
+import { RoomPhotos } from "@/components/site/room-photos";
 
 export const revalidate = 300;
 
@@ -102,7 +104,7 @@ export default async function HotelPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <main>
-        {/* Hero */}
+        {/* Hero: full-bleed cover photo with title overlay */}
         <section className="relative">
           <div className="relative aspect-[5/2] min-h-56 w-full overflow-hidden bg-cream-200">
             <Image
@@ -113,11 +115,11 @@ export default async function HotelPage({ params }: Props) {
               sizes="100vw"
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-maroon-950/80 via-maroon-950/20 to-transparent" />
           </div>
           <div className="absolute inset-x-0 bottom-0">
             <div className="mx-auto max-w-6xl px-4 pb-6">
-              <h1 className="font-display text-3xl font-semibold text-cream-50 sm:text-4xl">
+              <h1 className="font-display text-3xl font-semibold text-cream-50 drop-shadow sm:text-4xl">
                 {hotel.name}
               </h1>
               <p className="mt-1 font-medium text-marigold-300">
@@ -136,6 +138,21 @@ export default async function HotelPage({ params }: Props) {
         <div className="mx-auto max-w-6xl px-4 py-10">
           <div className="grid gap-10 lg:grid-cols-3">
             <div className="space-y-10 lg:col-span-2">
+              {/* Photos */}
+              {(hotel.gallery?.length ?? 0) > 1 && (
+                <section aria-labelledby="photos-heading">
+                  <h2
+                    id="photos-heading"
+                    className="font-display text-2xl font-semibold text-maroon-900"
+                  >
+                    Photos
+                  </h2>
+                  <div className="mt-4">
+                    <Gallery images={hotel.gallery} hotelName={hotel.name} />
+                  </div>
+                </section>
+              )}
+
               {/* About */}
               <section aria-labelledby="about-heading">
                 <h2
@@ -188,18 +205,21 @@ export default async function HotelPage({ params }: Props) {
                       key={rt.id}
                       className="card flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between"
                     >
-                      <div>
-                        <h3 className="font-display text-lg font-semibold text-maroon-900">
-                          {rt.name}
-                        </h3>
-                        <p className="mt-1 text-sm leading-relaxed text-maroon-800">
-                          {rt.description}
-                        </p>
-                        <p className="mt-2 text-sm font-semibold text-maroon-700">
-                          Sleeps {rt.maxAdults} adult{rt.maxAdults === 1 ? "" : "s"}
-                          {rt.maxChildren > 0 &&
-                            ` + ${rt.maxChildren} child${rt.maxChildren === 1 ? "" : "ren"}`}
-                        </p>
+                      <div className="flex gap-4">
+                        <RoomPhotos images={rt.images ?? []} roomName={rt.name} />
+                        <div>
+                          <h3 className="font-display text-lg font-semibold text-maroon-900">
+                            {rt.name}
+                          </h3>
+                          <p className="mt-1 text-sm leading-relaxed text-maroon-800">
+                            {rt.description}
+                          </p>
+                          <p className="mt-2 text-sm font-semibold text-maroon-700">
+                            Sleeps {rt.maxAdults} adult{rt.maxAdults === 1 ? "" : "s"}
+                            {rt.maxChildren > 0 &&
+                              ` + ${rt.maxChildren} child${rt.maxChildren === 1 ? "" : "ren"}`}
+                          </p>
+                        </div>
                       </div>
                       <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
                         <p>
