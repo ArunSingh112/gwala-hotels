@@ -28,7 +28,12 @@ export const SEED_HOTELS: SeedHotel[] = [
     email: "",
     amenities: ["Free WiFi", "Power backup", "24-hour front desk", "Parking"],
     heroImage: "/hotels/gwala-inn/hero.jpg",
-    gallery: ["/hotels/gwala-inn/hero.jpg"],
+    gallery: [
+      "/hotels/gwala-inn/hero.jpg",
+      "/hotels/gwala-inn/gallery-2.jpg",
+      "/hotels/gwala-inn/gallery-3.jpg",
+      "/hotels/gwala-inn/gallery-4.jpg",
+    ],
     checkInTime: "12:00",
     checkOutTime: "10:00",
     active: true,
@@ -50,7 +55,13 @@ export const SEED_HOTELS: SeedHotel[] = [
     email: "",
     amenities: ["Free WiFi", "Power backup", "Car parking", "Room service"],
     heroImage: "/hotels/gwala-dham/hero.jpg",
-    gallery: ["/hotels/gwala-dham/hero.jpg"],
+    gallery: [
+      "/hotels/gwala-dham/hero.jpg",
+      "/hotels/gwala-dham/gallery-2.jpg",
+      "/hotels/gwala-dham/gallery-3.jpg",
+      "/hotels/gwala-dham/gallery-4.jpg",
+      "/hotels/gwala-dham/gallery-5.jpg",
+    ],
     checkInTime: "12:00",
     checkOutTime: "10:00",
     active: true,
@@ -72,7 +83,13 @@ export const SEED_HOTELS: SeedHotel[] = [
     email: "",
     amenities: ["Free WiFi", "Power backup", "Lift", "Room service"],
     heroImage: "/hotels/gwala-palace/hero.jpg",
-    gallery: ["/hotels/gwala-palace/hero.jpg"],
+    gallery: [
+      "/hotels/gwala-palace/hero.jpg",
+      "/hotels/gwala-palace/gallery-2.jpg",
+      "/hotels/gwala-palace/gallery-3.jpg",
+      "/hotels/gwala-palace/gallery-4.jpg",
+      "/hotels/gwala-palace/gallery-5.jpg",
+    ],
     checkInTime: "12:00",
     checkOutTime: "10:00",
     active: true,
@@ -94,7 +111,12 @@ export const SEED_HOTELS: SeedHotel[] = [
     email: "",
     amenities: ["Free WiFi", "Power backup", "Room service", "Parking"],
     heroImage: "/hotels/gwala-residency/hero.jpg",
-    gallery: ["/hotels/gwala-residency/hero.jpg"],
+    gallery: [
+      "/hotels/gwala-residency/hero.jpg",
+      "/hotels/gwala-residency/gallery-2.jpg",
+      "/hotels/gwala-residency/gallery-3.jpg",
+      "/hotels/gwala-residency/gallery-4.jpg",
+    ],
     checkInTime: "12:00",
     checkOutTime: "10:00",
     active: true,
@@ -116,7 +138,12 @@ export const SEED_HOTELS: SeedHotel[] = [
     email: "",
     amenities: ["Free WiFi", "Power backup", "24-hour front desk"],
     heroImage: "/hotels/gwala-bhawan/hero.jpg",
-    gallery: ["/hotels/gwala-bhawan/hero.jpg"],
+    gallery: [
+      "/hotels/gwala-bhawan/hero.jpg",
+      "/hotels/gwala-bhawan/gallery-2.jpg",
+      "/hotels/gwala-bhawan/gallery-3.jpg",
+      "/hotels/gwala-bhawan/gallery-4.jpg",
+    ],
     checkInTime: "12:00",
     checkOutTime: "10:00",
     active: true,
@@ -124,74 +151,75 @@ export const SEED_HOTELS: SeedHotel[] = [
   },
 ];
 
-// Placeholder room types, identical for all five branches. These are guesses
-// at typical mid-range Vrindavan rates; the owner replaces them in the admin
-// panel (isSeedData drives the "sample data" banner until then).
-export const SEED_ROOM_TYPES: (RoomType & { id: string })[] = [
-  {
-    id: "standard-double",
-    name: "Standard Double",
+// Real room inventory per branch (bed count = max guests), from the owner.
+// Rates are placeholders until the owner sets them in the admin panel
+// (isSeedData drives the "sample data" banner until then).
+const ROOM_TYPE_BASE: Record<
+  "double" | "triple" | "quad",
+  Omit<RoomType, "totalRooms">
+> = {
+  double: {
+    name: "2 Bed Room",
     description:
-      "A clean, simply furnished room with a double bed, attached bathroom and hot water. Suits a couple or a small family travelling light.",
+      "A clean, simply furnished room for two guests with attached bathroom and hot water. Suits a couple or two pilgrims travelling together.",
     pricePerNight: 1200,
     maxAdults: 2,
     maxChildren: 1,
-    totalRooms: 8,
-    amenities: ["Attached bathroom", "Hot water", "Fan", "TV"],
+    amenities: ["Attached bathroom", "Hot water", "TV"],
     images: [],
     active: true,
     sortOrder: 1,
     isSeedData: true,
   },
-  {
-    id: "deluxe-double-ac",
-    name: "Deluxe Double (AC)",
+  triple: {
+    name: "3 Bed Room",
     description:
-      "A larger air-conditioned room with a double bed, ideal in the summer months. Attached bathroom with geyser.",
+      "A larger room sleeping three guests, with attached bathroom and hot water. Comfortable for a small family or group.",
     pricePerNight: 1800,
-    maxAdults: 2,
+    maxAdults: 3,
     maxChildren: 1,
-    totalRooms: 6,
-    amenities: ["Air conditioning", "Attached bathroom", "Geyser", "TV"],
+    amenities: ["Attached bathroom", "Hot water", "TV"],
     images: [],
     active: true,
     sortOrder: 2,
     isSeedData: true,
   },
-  {
-    id: "family-room",
-    name: "Family Room",
+  quad: {
+    name: "4 Bed Room",
     description:
-      "Two double beds in one large room, comfortable for parents with children or a small group travelling together.",
-    pricePerNight: 2800,
+      "The largest room in the house: four beds for a family or group travelling together, with attached bathroom and hot water.",
+    pricePerNight: 2400,
     maxAdults: 4,
     maxChildren: 2,
-    totalRooms: 4,
-    amenities: ["Air conditioning", "Two double beds", "Attached bathroom", "TV"],
+    amenities: ["Attached bathroom", "Hot water", "TV"],
     images: [],
     active: true,
     sortOrder: 3,
     isSeedData: true,
   },
-  {
-    id: "suite",
-    name: "Suite",
-    description:
-      "The largest room in the house: a bedroom with a separate sitting area, air conditioning throughout and space for an extra bed.",
-    pricePerNight: 3500,
-    maxAdults: 3,
-    maxChildren: 2,
-    totalRooms: 2,
-    amenities: [
-      "Air conditioning",
-      "Separate sitting area",
-      "Attached bathroom",
-      "Mini fridge",
-      "TV",
-    ],
-    images: [],
-    active: true,
-    sortOrder: 4,
-    isSeedData: true,
-  },
-];
+};
+
+const ROOM_TYPE_IDS: Record<keyof typeof ROOM_TYPE_BASE, string> = {
+  double: "2-bed-room",
+  triple: "3-bed-room",
+  quad: "4-bed-room",
+};
+
+function room(
+  kind: keyof typeof ROOM_TYPE_BASE,
+  totalRooms: number
+): RoomType & { id: string } {
+  return { id: ROOM_TYPE_IDS[kind], ...ROOM_TYPE_BASE[kind], totalRooms };
+}
+
+/** Room types per branch slug — counts are the owner's real inventory. */
+export const SEED_ROOM_TYPES_BY_HOTEL: Record<
+  string,
+  (RoomType & { id: string })[]
+> = {
+  "gwala-inn": [room("double", 10), room("triple", 3), room("quad", 3)],
+  "gwala-dham": [room("double", 18)],
+  "gwala-palace": [room("double", 7), room("triple", 4)],
+  "gwala-residency": [room("double", 8), room("quad", 3)],
+  "gwala-bhawan": [room("double", 11)],
+};

@@ -16,7 +16,7 @@ loadEnv({ path: ".env.local" });
 import { cert, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { FieldValue, getFirestore } from "firebase-admin/firestore";
-import { SEED_HOTELS, SEED_ROOM_TYPES } from "../src/lib/seed-data";
+import { SEED_HOTELS, SEED_ROOM_TYPES_BY_HOTEL } from "../src/lib/seed-data";
 
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
@@ -51,7 +51,10 @@ async function main() {
       console.log(`hotels/${hotel.slug} created`);
     }
 
-    for (const { id, ...roomType } of SEED_ROOM_TYPES) {
+    const roomTypes = SEED_ROOM_TYPES_BY_HOTEL[hotel.slug] ?? [];
+    const seedIds = new Set(roomTypes.map((rt) => rt.id));
+
+    for (const { id, ...roomType } of roomTypes) {
       const rtRef = hotelRef.collection("roomTypes").doc(id);
       const rtSnap = await rtRef.get();
       if (rtSnap.exists && !rtSnap.data()?.isSeedData) {
@@ -62,6 +65,16 @@ async function main() {
       }
       await rtRef.set(roomType);
       console.log(`  roomTypes/${id} seeded`);
+    }
+
+    // Remove stale seed room types no longer in the seed list (real data
+    // — anything without isSeedData — is never touched).
+    const allRts = await hotelRef.collection("roomTypes").get();
+    for (const doc of allRts.docs) {
+      if (!seedIds.has(doc.id) && doc.data()?.isSeedData) {
+        await doc.ref.delete();
+        console.log(`  roomTypes/${doc.id} removed (stale seed data)`);
+      }
     }
   }
 
