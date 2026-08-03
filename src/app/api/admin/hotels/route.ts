@@ -14,11 +14,13 @@ export async function GET(request: Request) {
     const admin = await requireAdmin(request);
     const scope = allowedHotelId(admin);
 
-    let query = adminDb().collection("hotels").orderBy("sortOrder") as FirebaseFirestore.Query;
+    let query = adminDb().collection("hotels") as FirebaseFirestore.Query;
     if (scope) query = query.where("slug", "==", scope);
 
     const snap = await query.get();
-    const hotels = snap.docs.map((d) => {
+    const hotels = snap.docs
+      .sort((a, b) => ((a.data() as Hotel).sortOrder ?? 0) - ((b.data() as Hotel).sortOrder ?? 0))
+      .map((d) => {
       const h = d.data() as Hotel;
       return {
         id: d.id,
@@ -34,6 +36,7 @@ export async function GET(request: Request) {
         tagline: h.tagline,
         mapsUrl: h.mapsUrl,
         distances: h.distances ?? {},
+        gallery: h.gallery ?? [],
         active: h.active,
       };
     });

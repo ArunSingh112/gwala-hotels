@@ -10,6 +10,7 @@ const NAV = [
   { href: "/admin/bookings", label: "Bookings" },
   { href: "/admin/calendar", label: "Calendar" },
   { href: "/admin/rooms", label: "Rooms & Pricing" },
+  { href: "/admin/photos", label: "Photos" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/settings", label: "Branch Settings" },
   { href: "/admin/users", label: "Users", ownerOnly: true },
