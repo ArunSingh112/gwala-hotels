@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Contact Gwala Hotels — Phone, WhatsApp & Addresses",
   description:
     "Reach any Gwala Hotels branch in Vrindavan by phone or WhatsApp. Addresses and contact details for all five branches.",
+  alternates: { canonical: "/contact" },
 };
 
 export default async function ContactPage() {

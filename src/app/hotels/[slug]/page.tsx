@@ -34,12 +34,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   // Gwala Bhawan leads with the temple street — that's what pilgrims search.
   const title =
     hotel.slug === "gwala-bhawan"
-      ? `${hotel.name} — On Banke Bihari Mandir Street`
+      ? `${hotel.name} — Hotel on Banke Bihari Mandir Street, Vrindavan`
       : `${hotel.name} — ${hotel.tagline}`;
+  const description = `${hotel.name}, a family-run hotel in Vrindavan near Banke Bihari Mandir. ${hotel.description.slice(0, 120)}… Book online, pay at the hotel, free cancellation.`;
   return {
     title,
-    description: `${hotel.description.slice(0, 150)}… Book online, pay at the hotel.`,
-    openGraph: { title, images: [hotel.heroImage] },
+    description,
+    alternates: { canonical: `/hotels/${hotel.slug}` },
+    keywords: [
+      hotel.name,
+      "hotel in Vrindavan",
+      "hotel near Banke Bihari Mandir",
+      "budget hotel Vrindavan",
+      "Vrindavan hotel booking pay at hotel",
+    ],
+    openGraph: {
+      title,
+      description,
+      images: [hotel.heroImage],
+      type: "website",
+    },
   };
 }
 
@@ -66,33 +80,65 @@ export default async function HotelPage({ params }: Props) {
     ? Math.min(...roomTypes.map((rt) => rt.pricePerNight))
     : null;
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Hotel",
-    name: hotel.name,
-    description: hotel.description,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: hotel.address,
-      addressLocality: "Vrindavan",
-      addressRegion: "Uttar Pradesh",
-      postalCode: "281121",
-      addressCountry: "IN",
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Hotel",
+      name: hotel.name,
+      url: `${base}/hotels/${hotel.slug}`,
+      image: (hotel.gallery?.length ? hotel.gallery : [hotel.heroImage]).map(
+        (src) => (src.startsWith("http") ? src : `${base}${src}`)
+      ),
+      description: hotel.description,
+      address: {
+        "@type": "PostalAddress",
+        streetAddress: hotel.address,
+        addressLocality: "Vrindavan",
+        addressRegion: "Uttar Pradesh",
+        postalCode: "281121",
+        addressCountry: "IN",
+      },
+      hasMap: hotel.mapsUrl,
+      telephone: hotel.displayPhone,
+      checkinTime: hotel.checkInTime,
+      checkoutTime: hotel.checkOutTime,
+      amenityFeature: hotel.amenities.map((a) => ({
+        "@type": "LocationFeatureSpecification",
+        name: a,
+        value: true,
+      })),
+      ...(minPrice ? { priceRange: `₹${minPrice}+ per night` } : {}),
+      ...(rating
+        ? {
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: rating.average,
+              reviewCount: rating.count,
+            },
+          }
+        : {}),
     },
-    telephone: hotel.displayPhone,
-    checkinTime: hotel.checkInTime,
-    checkoutTime: hotel.checkOutTime,
-    ...(minPrice ? { priceRange: `₹${minPrice}+ per night` } : {}),
-    ...(rating
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: rating.average,
-            reviewCount: rating.count,
-          },
-        }
-      : {}),
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: base },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Our Hotels",
+          item: `${base}/hotels`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: hotel.name,
+          item: `${base}/hotels/${hotel.slug}`,
+        },
+      ],
+    },
+  ];
 
   const distances = Object.entries(hotel.distances ?? {});
 

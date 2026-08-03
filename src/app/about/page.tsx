@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "About Gwala Hotels — A Vrindavan Family, Five Doorsteps",
   description:
     "The Gwala Hotels story: one Vrindavan family, five branches, and a simple promise — a clean room, a fair rate, and payment only when you arrive.",
+  alternates: { canonical: "/about" },
 };
 
 export default async function AboutPage() {

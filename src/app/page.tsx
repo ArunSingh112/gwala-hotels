@@ -9,12 +9,38 @@ import { SearchWidget } from "@/components/site/search-widget";
 
 export const revalidate = 300;
 
+// Questions pilgrims actually search for. Rendered on the page and as
+// FAQPage structured data so Google can show them as rich results.
+const FAQS: { q: string; a: string }[] = [
+  {
+    q: "Which is the best hotel near Banke Bihari Mandir in Vrindavan?",
+    a: "Gwala Bhawan stands right on the Banke Bihari Mandir street, and every other Gwala Hotels branch is a short ride from the temple. All five branches are run by the same Vrindavan family, with clean rooms and fair rates.",
+  },
+  {
+    q: "Can I book a hotel in Vrindavan without advance payment?",
+    a: "Yes. At Gwala Hotels you book online in two minutes and pay only when you arrive at the hotel — no advance, no card details, and free cancellation.",
+  },
+  {
+    q: "What is the price of a hotel room in Vrindavan?",
+    a: "Gwala Hotels rooms start around ₹1,200 per night for a 2-bed room, with 3-bed and 4-bed family rooms available at all five branches. Rates include attached bathroom and hot water.",
+  },
+  {
+    q: "Are there family rooms in Vrindavan for groups?",
+    a: "Yes. Every Gwala Hotels branch has 2, 3 and 4 bed rooms, so families and groups travelling for darshan can stay together. Larger groups can book multiple rooms in one booking.",
+  },
+  {
+    q: "How far are Gwala Hotels from Prem Mandir and ISKCON Vrindavan?",
+    a: "Each branch page lists walking and rickshaw distances to Banke Bihari Mandir, Prem Mandir, ISKCON and Nidhivan, so you can pick the branch closest to the darshans you came for.",
+  },
+];
+
 export default async function HomePage() {
   const [hotels, reviews] = await Promise.all([
     getHotels(),
     getApprovedReviews(undefined, 6),
   ]);
   const branches = hotels.map((h) => ({ slug: h.slug, name: h.name }));
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   // Three photos for the hero collage, spread across branches.
   const heroPhotos = [
     { src: "/hotels/gwala-bhawan/hero.jpg", alt: "Room at Gwala Bhawan" },
@@ -22,9 +48,48 @@ export default async function HomePage() {
     { src: "/hotels/gwala-residency/hero.jpg", alt: "Room at Gwala Residency" },
   ];
 
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": `${base}/#organization`,
+      name: "Gwala Hotels",
+      url: base,
+      description:
+        "A family-run group of five hotels in Vrindavan, Uttar Pradesh, near Banke Bihari Mandir, Prem Mandir and ISKCON.",
+      areaServed: "Vrindavan, Mathura, Uttar Pradesh, India",
+      subOrganization: hotels.map((h) => ({
+        "@type": "Hotel",
+        name: h.name,
+        url: `${base}/hotels/${h.slug}`,
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": `${base}/#website`,
+      name: "Gwala Hotels Vrindavan",
+      url: base,
+      publisher: { "@id": `${base}/#organization` },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: FAQS.map((f) => ({
+        "@type": "Question",
+        name: f.q,
+        acceptedAnswer: { "@type": "Answer", text: f.a },
+      })),
+    },
+  ];
+
   return (
     <>
       <SiteHeader />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <main>
         {/* Hero */}
         <section className="jali relative overflow-hidden bg-cream-100">
@@ -34,9 +99,11 @@ export default async function HomePage() {
                 Radhe Radhe · Welcome to Braj
               </p>
               <h1 className="reveal reveal-2 mt-3 max-w-2xl font-display text-4xl font-semibold leading-tight text-maroon-950 sm:text-5xl">
-                Rest well in Vrindavan,
+                Hotels in Vrindavan,
                 <br />
-                <span className="text-marigold-600">steps from the temples.</span>
+                <span className="text-marigold-600">
+                  steps from Banke Bihari.
+                </span>
               </h1>
               <p className="reveal reveal-3 mt-4 max-w-xl text-lg leading-relaxed text-maroon-800">
                 Five family-run Gwala Hotels branches across the holy town. Book
@@ -193,6 +260,31 @@ export default async function HomePage() {
             </div>
           </section>
         )}
+
+        {/* FAQ — mirrors the FAQPage structured data above */}
+        <section className="mx-auto max-w-3xl px-4 py-14">
+          <h2 className="font-display text-3xl font-semibold text-maroon-900">
+            Planning a stay in Vrindavan?
+          </h2>
+          <div className="mt-6 space-y-3">
+            {FAQS.map((f) => (
+              <details
+                key={f.q}
+                className="card group p-5 open:shadow-md"
+              >
+                <summary className="cursor-pointer list-none font-semibold text-maroon-900 marker:content-none">
+                  <span className="mr-2 inline-block text-marigold-600 transition group-open:rotate-90">
+                    ›
+                  </span>
+                  {f.q}
+                </summary>
+                <p className="mt-3 pl-5 text-sm leading-relaxed text-maroon-800">
+                  {f.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </section>
 
         {/* Closing CTA */}
         <section className="mx-auto max-w-6xl px-4 pb-4">

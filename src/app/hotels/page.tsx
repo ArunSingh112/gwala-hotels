@@ -9,7 +9,14 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Our Hotels — Five Branches Across Vrindavan",
   description:
-    "Hotel Gwala Inn, Gwala Dham, Gwala Palace, Gwala Residency and Gwala Bhawan — five Gwala Hotels branches across Vrindavan. Compare and book online, pay at the hotel.",
+    "Hotel Gwala Inn, Gwala Dham, Gwala Palace, Gwala Residency and Gwala Bhawan — five Gwala Hotels branches across Vrindavan near Banke Bihari Mandir. Compare rooms and book online, pay at the hotel.",
+  alternates: { canonical: "/hotels" },
+  keywords: [
+    "hotels in Vrindavan",
+    "Vrindavan hotel list",
+    "hotel near Banke Bihari Mandir",
+    "budget hotel Vrindavan",
+  ],
 };
 
 export default async function HotelsPage() {

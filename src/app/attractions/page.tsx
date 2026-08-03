@@ -11,14 +11,50 @@ export const metadata: Metadata = {
   title: "Temples & Attractions in Vrindavan — Banke Bihari, Prem Mandir, ISKCON",
   description:
     "Plan your darshan days in Vrindavan: Banke Bihari Mandir, Prem Mandir, ISKCON, Nidhivan, Radha Raman and more — with notes from the Gwala Hotels family on when to visit each.",
+  alternates: { canonical: "/attractions" },
+  keywords: [
+    "Vrindavan temples",
+    "Banke Bihari Mandir timings",
+    "Prem Mandir Vrindavan",
+    "ISKCON Vrindavan",
+    "places to visit in Vrindavan",
+    "Nidhivan Vrindavan",
+  ],
 };
 
 export default async function AttractionsPage() {
   const hotels = await getHotels();
+  const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Temples & attractions of Vrindavan",
+    itemListElement: ATTRACTIONS.map((a, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "TouristAttraction",
+        name: a.name,
+        description: a.summary,
+        url: `${base}/attractions#${a.slug}`,
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Vrindavan",
+          addressRegion: "Uttar Pradesh",
+          addressCountry: "IN",
+        },
+      },
+    })),
+  };
 
   return (
     <>
       <SiteHeader />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <main className="mx-auto max-w-4xl px-4 py-12">
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-marigold-700">
           Plan your visit

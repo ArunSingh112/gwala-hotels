@@ -10,7 +10,13 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "Book a Room — Pay at Hotel, Free Cancellation",
   description:
-    "Book a room at any Gwala Hotels branch in Vrindavan. Live availability, no account needed, no advance payment — pay when you arrive.",
+    "Book a hotel room in Vrindavan at any Gwala Hotels branch. Live availability, no account needed, no advance payment — pay when you arrive. Free cancellation.",
+  alternates: { canonical: "/booking" },
+  keywords: [
+    "Vrindavan hotel booking",
+    "book hotel Vrindavan pay at hotel",
+    "Vrindavan room booking online",
+  ],
 };
 
 export default async function BookingPage() {
