@@ -11,6 +11,7 @@ export type ApiErrorCode =
   | "unauthorized"
   | "forbidden"
   | "rate_limited"
+  | "photo_storage_unavailable"
   | "internal";
 
 export class ApiError extends Error {
