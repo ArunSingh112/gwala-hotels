@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
 import type { Hotel, Review, RoomType } from "@/lib/types";
-import { SEED_HOTELS, SEED_ROOM_TYPES } from "@/lib/seed-data";
+import { SEED_HOTELS, SEED_ROOM_TYPES_BY_HOTEL } from "@/lib/seed-data";
 
 // Public-site reads. When Firebase Admin credentials are configured the data
 // comes from Firestore; without them (local dev, CI builds) the seed data is
@@ -23,9 +23,10 @@ export const getHotels = cache(async (): Promise<Hotel[]> => {
   const snap = await adminDb()
     .collection("hotels")
     .where("active", "==", true)
-    .orderBy("sortOrder")
     .get();
-  return snap.docs.map((d) => d.data() as Hotel);
+  return snap.docs
+    .map((d) => d.data() as Hotel)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 });
 
 export const getHotelBySlug = cache(
@@ -38,9 +39,9 @@ export const getHotelBySlug = cache(
 export const getRoomTypes = cache(
   async (hotelId: string): Promise<(RoomType & { id: string })[]> => {
     if (!hasAdminCreds()) {
-      return SEED_ROOM_TYPES.filter((rt) => rt.active).sort(
-        (a, b) => a.sortOrder - b.sortOrder
-      );
+      return (SEED_ROOM_TYPES_BY_HOTEL[hotelId] ?? [])
+        .filter((rt) => rt.active)
+        .sort((a, b) => a.sortOrder - b.sortOrder);
     }
     const { adminDb } = await import("@/lib/firebase/admin");
     const snap = await adminDb()
@@ -48,9 +49,10 @@ export const getRoomTypes = cache(
       .doc(hotelId)
       .collection("roomTypes")
       .where("active", "==", true)
-      .orderBy("sortOrder")
       .get();
-    return snap.docs.map((d) => ({ id: d.id, ...(d.data() as RoomType) }));
+    return snap.docs
+      .map((d) => ({ id: d.id, ...(d.data() as RoomType) }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
   }
 );
 
@@ -66,11 +68,18 @@ export const getApprovedReviews = cache(
       .collection("reviews")
       .where("status", "==", "approved") as FirebaseFirestore.Query;
     if (hotelId) q = q.where("hotelId", "==", hotelId);
-    const snap = await q.orderBy("createdAt", "desc").limit(limit).get();
-    return snap.docs.map((d) => {
-      const { createdAt: _c, moderatedBy: _m, ...rest } = d.data() as Review;
-      return { id: d.id, ...rest };
-    });
+    // Sorted in memory rather than with orderBy so no composite index is
+    // needed; review volume is small enough for this to be fine.
+    const snap = await q.limit(500).get();
+    const toMillis = (v: unknown) =>
+      (v as { toMillis?: () => number } | undefined)?.toMillis?.() ?? 0;
+    return snap.docs
+      .sort((a, b) => toMillis(b.get("createdAt")) - toMillis(a.get("createdAt")))
+      .slice(0, limit)
+      .map((d) => {
+        const { createdAt: _c, moderatedBy: _m, ...rest } = d.data() as Review;
+        return { id: d.id, ...rest };
+      });
   }
 );
 

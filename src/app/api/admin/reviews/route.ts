@@ -20,8 +20,14 @@ export async function GET(request: Request) {
       .where("status", "==", status) as FirebaseFirestore.Query;
     if (scope) query = query.where("hotelId", "==", scope);
 
-    const snap = await query.orderBy("createdAt", "desc").limit(200).get();
-    const reviews = snap.docs.map((d) => {
+    // Sorted in memory to avoid needing a composite index.
+    const snap = await query.limit(500).get();
+    const toMillis = (v: unknown) =>
+      (v as { toMillis?: () => number } | undefined)?.toMillis?.() ?? 0;
+    const reviews = snap.docs
+      .sort((a, b) => toMillis(b.get("createdAt")) - toMillis(a.get("createdAt")))
+      .slice(0, 200)
+      .map((d) => {
       const r = d.data() as Review;
       const created = r.createdAt as { toDate?: () => Date } | undefined;
       return {
@@ -36,7 +42,6 @@ export async function GET(request: Request) {
         createdAt: created?.toDate ? created.toDate().toISOString() : null,
       };
     });
-
     return NextResponse.json({ reviews });
   } catch (err) {
     return handleApiError(err);

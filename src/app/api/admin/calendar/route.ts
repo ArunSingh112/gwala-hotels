@@ -27,8 +27,10 @@ export async function GET(request: Request) {
       .doc(hotelId)
       .collection("roomTypes")
       .where("active", "==", true)
-      .orderBy("sortOrder")
       .get();
+    const roomTypeDocs = [...roomTypesSnap.docs].sort(
+      (a, b) => ((a.data() as RoomType).sortOrder ?? 0) - ((b.data() as RoomType).sortOrder ?? 0)
+    );
 
     const [yearStr, monthStr] = month.split("-");
     const daysInMonth = new Date(
@@ -39,7 +41,7 @@ export async function GET(request: Request) {
     );
 
     const rows = [];
-    for (const rtDoc of roomTypesSnap.docs) {
+    for (const rtDoc of roomTypeDocs) {
       const rt = rtDoc.data() as RoomType;
       const refs = dates.map((date) =>
         db.collection("availability").doc(`${hotelId}_${rtDoc.id}_${date}`)

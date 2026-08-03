@@ -39,12 +39,12 @@ export async function GET(request: Request) {
     const to = url.searchParams.get("to") || null; // checkIn <= to
     const q = (url.searchParams.get("q") || "").trim().toLowerCase();
 
+    // Equality filters never need composite indexes; the checkIn range and
+    // sort are applied in memory over the (bounded) result set instead.
     let query = adminDb().collection("bookings") as FirebaseFirestore.Query;
     if (hotelId) query = query.where("hotelId", "==", hotelId);
     if (status) query = query.where("status", "==", status);
-    if (from) query = query.where("checkIn", ">=", from);
-    if (to) query = query.where("checkIn", "<=", to);
-    query = query.orderBy("checkIn", "desc").limit(500);
+    query = query.limit(1000);
 
     const snap = await query.get();
     let rows: AdminBookingRow[] = snap.docs.map((d) => {
@@ -57,6 +57,10 @@ export async function GET(request: Request) {
         cancelledAt: toIso(b.cancelledAt),
       };
     });
+    if (from) rows = rows.filter((r) => r.checkIn >= from);
+    if (to) rows = rows.filter((r) => r.checkIn <= to);
+    rows.sort((a, b) => (a.checkIn < b.checkIn ? 1 : a.checkIn > b.checkIn ? -1 : 0));
+    rows = rows.slice(0, 500);
 
     if (q) {
       rows = rows.filter(
